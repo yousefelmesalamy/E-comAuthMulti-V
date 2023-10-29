@@ -9,6 +9,16 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}, 'is_active': {'read_only': True},
                         'is_superuser': {'read_only': True}}
 
+    def validate_passwrord(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError('Password must be at least 8 characters long.')
+        return value
+
+    def validate(self, data):
+        if ' ' in data['password']:
+            raise serializers.ValidationError('Password must not contain spaces.')
+        return data
+
 
 class UserSellerSerializer(UserSerializer):
 
