@@ -32,7 +32,7 @@ class USER(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30, null=False, blank=False)
     phone_number = models.CharField(max_length=30, null=False, blank=False)
 
-    is_seller = models.BooleanField()
+    is_seller = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
