@@ -45,9 +45,10 @@ class UserSellerViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [UserPermission]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['id', 'username', 'email', 'is_active', 'is_seller', ]
+    filterset_fields = ('id', 'username', 'email', 'is_active', 'is_seller')
     search_fields = ['username', 'email', 'is_active', 'is_seller', ]
-    lockup_field = 'id'
+
+    # lockup_field = 'id'
 
     def create(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
@@ -67,10 +68,9 @@ class UserSellerViewSet(viewsets.ModelViewSet):
         kwargs['partial'] = True
         return super().update(request, *args, **kwargs)
 
-    def list(self, request, *args, **kwargs):
+    def get_queryset(self):
         queryset = USER.objects.filter(is_seller=True)
-        serializer = UserSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return queryset
 
     def retrieve(self, request, pk=None):
         queryset = USER.objects.filter(is_seller=True)
@@ -120,27 +120,28 @@ class UserBuyerViewSet(viewsets.ModelViewSet):
         kwargs['partial'] = True
         return super().update(request, *args, **kwargs)
 
-    def list(self, request, *args, **kwargs):
-        queryset = USER.objects.filter(is_seller=False)
-        serializer = UserSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = self.queryset
+        if not self.request.user.is_superuser:
+            queryset = USER.objects.filter(is_seller=False)
+        return queryset
 
     def retrieve(self, request, pk=None):
-        queryset = USER.objects.filter(is_seller=False)
+        queryset = self.queryset
         user = get_object_or_404(queryset, pk=pk)
-        serializer = UserSerializer(user)
+        serializer = self.serializer_class(user)
         return Response(serializer.data)
 
     def update(self, request, pk=None):
-        queryset = USER.objects.filter(is_seller=False)
+        queryset = self.queryset
         user = get_object_or_404(queryset, pk=pk)
-        serializer = UserSerializer(user, data=request.data)
+        serializer = self.serializer_class(user, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
     def destroy(self, request, pk=None):
-        queryset = USER.objects.filter(is_seller=False)
+        queryset = self.queryset
         user = get_object_or_404(queryset, pk=pk)
         user.delete()
         return Response({"Response": "user deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
