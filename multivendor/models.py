@@ -7,8 +7,6 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 
-# C
-
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
