@@ -8,7 +8,7 @@ class UserPermission(permissions.BasePermission):
             return True
         elif request.method in ['PUT', 'PATCH']:
             # allow authenticated staff users to update any user object
-            return bool(request.user and request.user.is_authenticated and request.user.is_seller and request.user.is_superuser)
+            return bool(request.user and request.user.is_authenticated and request.user.is_seller)
         elif request.method == 'DELETE':
             # allow staff and superusers to delete any user object
             return bool(request.user and request.user.is_superuser)
