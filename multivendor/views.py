@@ -64,33 +64,9 @@ class UserSellerViewSet(viewsets.ModelViewSet):
         except (TypeError, KeyError):
             return {}
 
-    def update(self, request, *args, **kwargs):
-        kwargs['partial'] = True
-        return super().update(request, *args, **kwargs)
-
     def get_queryset(self):
         queryset = USER.objects.filter(is_seller=True)
         return queryset
-
-    def retrieve(self, request, pk=None):
-        queryset = USER.objects.filter(is_seller=True)
-        user = get_object_or_404(queryset, pk=pk)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
-    def update(self, request, pk=None):
-        queryset = USER.objects.filter(is_seller=True)
-        user = get_object_or_404(queryset, pk=pk)
-        serializer = UserSerializer(user, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    def destroy(self, request, pk=None):
-        queryset = USER.objects.filter(is_seller=True)
-        user = get_object_or_404(queryset, pk=pk)
-        user.delete()
-        return Response({"Response": "user deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
 class UserBuyerViewSet(viewsets.ModelViewSet):
@@ -116,32 +92,8 @@ class UserBuyerViewSet(viewsets.ModelViewSet):
         except (TypeError, KeyError):
             return {}
 
-    def update(self, request, *args, **kwargs):
-        kwargs['partial'] = True
-        return super().update(request, *args, **kwargs)
-
     def get_queryset(self):
         queryset = self.queryset
         if not self.request.user.is_superuser:
             queryset = USER.objects.filter(is_seller=False)
         return queryset
-
-    def retrieve(self, request, pk=None):
-        queryset = self.queryset
-        user = get_object_or_404(queryset, pk=pk)
-        serializer = self.serializer_class(user)
-        return Response(serializer.data)
-
-    def update(self, request, pk=None):
-        queryset = self.queryset
-        user = get_object_or_404(queryset, pk=pk)
-        serializer = self.serializer_class(user, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    def destroy(self, request, pk=None):
-        queryset = self.queryset
-        user = get_object_or_404(queryset, pk=pk)
-        user.delete()
-        return Response({"Response": "user deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
