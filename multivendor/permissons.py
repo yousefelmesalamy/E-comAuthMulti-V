@@ -8,25 +8,26 @@ class UserPermission(permissions.BasePermission):
             return True
         elif request.method in ['PUT', 'PATCH']:
             # allow authenticated staff users to update any user object
-            return bool(request.user and request.user.is_authenticated and request.user.is_seller)
+            return bool(request.user and request.user.is_authenticated and request.user.is_seller and request.user.is_superuser)
         elif request.method == 'DELETE':
             # allow staff and superusers to delete any user object
             return bool(request.user and request.user.is_superuser)
         else:
             return False
 
-    # def has_object_permission(self, request, view, obj):
-    #     if request.method == 'GET':
-    #         # allow authenticated users to retrieve their own user object
-    #         return bool(request.user and request.user.is_authenticated and obj == request.user)
-    #     elif request.method in ['PUT', 'PATCH']:
-    #         # allow authenticated staff users to update any user object
-    #         return bool(request.user and request.user.is_authenticated and request.user.is_seller and request.user.is_superuser)
-    #     elif request.method == 'DELETE':
-    #         # allow staff and superusers to delete any user object
-    #         return bool(request.user and request.user.is_seller)
-    #     else:
-    #         return False
+    def has_object_permission(self, request, view, obj):
+        if request.method == 'GET':
+            # allow authenticated users to retrieve their own user object
+            return bool(request.user and request.user.is_authenticated and obj == request.user)
+        elif request.method in ['PUT', 'PATCH']:
+            # allow authenticated staff users to update any user object
+            return bool(request.user and request.user.is_authenticated and request.user.is_seller and request.user.is_superuser)
+        elif request.method == 'DELETE':
+            # allow staff and superusers to delete any user object
+            return bool(request.user and request.user.is_seller)
+        else:
+            return False
+
 
 def has_object_permission(self, request, view, obj):
     if request.method == 'GET':
