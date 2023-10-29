@@ -21,20 +21,10 @@ class UserPermission(permissions.BasePermission):
             return bool(request.user and request.user.is_authenticated and obj == request.user)
         elif request.method in ['PUT', 'PATCH']:
             # allow authenticated staff users to update any user object
-            return bool(request.user and request.user.is_authenticated and request.user.is_seller and request.user.is_superuser)
+            return bool(
+                request.user and request.user.is_authenticated and request.user.is_seller and request.user.is_superuser)
         elif request.method == 'DELETE':
             # allow staff and superusers to delete any user object
             return bool(request.user and request.user.is_seller)
         else:
             return False
-
-
-def has_object_permission(self, request, view, obj):
-    if request.method == 'GET':
-        return bool(request.user and request.user.is_authenticated and obj == request.user)
-    elif request.method in ['PUT', 'PATCH']:
-        return bool(request.user and request.user.is_authenticated)
-    elif request.method == 'DELETE':
-        return bool(request.user and request.user.is_superuser)
-    else:
-        return False
