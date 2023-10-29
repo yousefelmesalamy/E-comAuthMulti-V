@@ -6,8 +6,9 @@ router = routers.DefaultRouter()
 router.register('seller', UserSellerViewSet, basename='seller')
 router.register('buyer', UserBuyerViewSet, basename='buyer')
 urlpatterns = [
-    path('user/', UserGeneric_list.as_view(), name='login'),
+    path('user/', UserGeneric_list.as_view(), name='user'),
+    path("login/", LoginView.as_view(), name='login'),
 
-    ]
+]
 
 urlpatterns += router.urls
