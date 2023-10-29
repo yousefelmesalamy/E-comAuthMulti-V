@@ -75,6 +75,7 @@ class LoginView(ObtainAuthToken):
 class UserGeneric_list(generics.ListCreateAPIView):  # list only API
     queryset = USER.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [UserPermission]
 
     def get(self, request):
         return self.list(request)
